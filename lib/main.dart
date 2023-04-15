@@ -33,6 +33,19 @@ class MyAppState extends ChangeNotifier {
     current = Mot.random();
     notifyListeners();
   }
+
+  var favorites = <String>[];
+
+  void toggleFav() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    print(favorites);
+
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatelessWidget {
@@ -41,18 +54,38 @@ class MyHomePage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var leMot = appState.current;
 
+    IconData icon;
+    if (appState.favorites.contains(leMot)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             BigCard(leMot: leMot),
-            SizedBox(height: 20,),
-            ElevatedButton(
-              onPressed: () {
-                appState.getNext();
-              },
-              child: Text('Suivant'),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                 ElevatedButton.icon(
+                  onPressed: () {appState.toggleFav();}, 
+                  icon: Icon(icon),
+                  label: Text('Like'),
+                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    appState.getNext();
+                  },
+                  child: Text('Suivant'),
+                ),
+               
+              ],
             )
           ],
         ),
